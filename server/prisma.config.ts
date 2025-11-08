@@ -1,4 +1,10 @@
+// Ensure environment variables are loaded even when running commands from the repo root
+import dotenv from "dotenv";
+import path from "node:path";
 import { defineConfig, env } from "prisma/config";
+
+// Load the .env that sits next to this config file (server/.env)
+dotenv.config({ path: path.join(__dirname, ".env") });
 
 export default defineConfig({
   schema: "prisma/schema.prisma",

@@ -8,3 +8,29 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
+model user {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  email String @unique
+  password String
+  role  ROLE
+  createdAt DateTime @default(now())
+}
+
+model feedback {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  message String
+  createdAt DateTime @default(now())
+  category CATEGORY
+}
+
+enum ROLE {
+  ADMIN
+  USER
+}
+
+enum CATEGORY {
+  PERSONAL
+  WORKLOAD
+  TEAM
+}
