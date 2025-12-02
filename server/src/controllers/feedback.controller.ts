@@ -3,7 +3,8 @@ import {
   getWeeklyFeedback,
   submitFeedback,
 } from "../services/feedback.service";
-import { Category } from "../utils/types";
+import { Category, datesSchema } from "../utils/types";
+import * as z from 'zod';
 
 export const createFeedbackController = async (req: Request, res: Response) => {
   try {
@@ -21,9 +22,13 @@ export const getFeedbackSummaryController = async (
 ) => {
   try {
     const { from, to } = req.query;
-    const feedbacks = await getWeeklyFeedback(from as string, to as string);
+    const inputValues = datesSchema.parse({from,to});
+    const feedbacks = await getWeeklyFeedback(inputValues.from as string, inputValues.to as string);
     return res.status(200).json({ success: true, data: feedbacks });
-  } catch (err) {
-    console.log("Got error while fetching weekly summary: ", err);
+  } catch (error) {
+    if(error instanceof z.ZodError){
+    error.issues; 
+  }
+    console.log("Got error while fetching weekly summary: ", error);
   }
 };

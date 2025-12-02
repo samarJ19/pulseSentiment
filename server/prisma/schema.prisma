@@ -1,12 +1,12 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
 
 generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
-}
 
 model user {
   id String @id @default(auto()) @map("_id") @db.ObjectId
@@ -33,3 +33,6 @@ enum CATEGORY {
   WORKLOAD
   TEAM
 }
+
+
+
