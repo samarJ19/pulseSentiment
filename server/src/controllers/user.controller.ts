@@ -1,47 +1,47 @@
 import { Request, Response } from "express";
-import { loginUserSchema, registerUserSchema } from "../utils/types";
-import { registerUser, signInUser } from "../services/user.service";
+import { exportControllerInput, loginUserSchema, registerUserSchema } from "../utils/types";
+import { exportFeedbackService, registerUser, signInUser } from "../services/user.service";
+import { asyncHandler, sendSuccess } from "../utils/helperFunction";
 
-export const registerUserController = async (req: Request, res: Response) => {
-  try {
+
+export const registerUserController = asyncHandler(async (req: Request, res: Response) => {
     const { email, password, role } = req.body;
     //need to put zod validation here
     const inputValues = registerUserSchema.parse({ email, password, role });
+   
     //call service layer
     const result = await registerUser(
       inputValues.email,
       inputValues.password,
       inputValues.role
     );
-    if (!result.success) {
-      return res.status(400).json(result);
-    }
-    return res.status(201).json(result);
-  } catch (error: any) {
-    console.log(error);
-    return res.status(400).json({
-      success: false,
-      error: {
-        name: "ValidationError",
-        message: error.message,
-      },
-    });
-  }
-};
+    return sendSuccess(res,result,200);
+  
+});
 
-export const loginUserController = async (req: Request, res: Response) => {
-  try {
+export const loginUserController = asyncHandler(async (req: Request, res: Response) => {
     const { email, password } = req.body;
     //validate input with zod
     const inputValues = loginUserSchema.parse({ email, password });
+   
     //call service layer
     const result = await signInUser(inputValues.email, inputValues.password);
-    if (!result.success) {
-      return res.status(400).json(result);
+
+    return sendSuccess(res,result,200);
+  
+});
+
+export const exportFeedbackController = asyncHandler(async (req:Request,res:Response) => {
+    const {from, to, format} = req.query;
+    //zod parsing of the input
+    const inputValues = exportControllerInput.parse({from,to,format});
+
+    const fileData = await exportFeedbackService(inputValues.from,inputValues.to,inputValues.format);
+
+    if(format && format == 'csv'){
+      res.setHeader("Content-Type","text/csv");
+      res.setHeader("Content-Description","attachment; filename=feedback.csv");
+      res.send(fileData);
     }
-    return res.status(200).json(result);
-  } catch (error: any) {
-    console.log(error);
-    return res.status(400).json({ error: error.message });
-  }
-};
+    return sendSuccess(res,fileData,200);
+});

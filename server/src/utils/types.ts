@@ -52,3 +52,10 @@ export const loginUserSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
 });
+
+//making a schema for export controller, the fields can be null or string
+export const exportControllerInput = z.object({
+  from:z.string().optional(),
+  to:z.string().optional(),
+  format:z.string().optional()
+});

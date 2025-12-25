@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { ApiError } from "../utils/ApiError";
 
 export const roleMiddleware = async (
   req: Request,
@@ -7,18 +8,14 @@ export const roleMiddleware = async (
 ) => {
   try {
     if (req.user?.role !== "ADMIN") {
-      return res.status(403).json({
-        name: "Unauthorized",
-        message: "You do not have right permission to view this page",
-      });
+      throw new ApiError(
+        "Unauthorized",
+        "You do not have right permission to view this page",
+        403
+      );
     }
     return next();
   } catch (error: any) {
-    return res.status(401).json({
-      //Standard error response , I want to define standard error and success response
-      //for consistent response
-      name: error?.name,
-      message: error?.message,
-    });
+    throw new ApiError(error.name, error.message);
   }
 };
