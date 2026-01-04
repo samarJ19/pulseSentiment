@@ -21,7 +21,7 @@ export const registerUser = async (
   email: string,
   password: string,
   role: ROLE
-): Promise<ApiResponse<{ token: string }>> => {
+) => {
   try {
     let user = await storeUser(email, password, role);
     const payload = {
@@ -31,7 +31,7 @@ export const registerUser = async (
     const token = generateToken(payload);
     return {
       success: true,
-      data: { token },
+      data: { token, role:user.role },
     };
   } catch (error: any) {
     throw new ApiError(
@@ -44,7 +44,7 @@ export const registerUser = async (
 export const signInUser = async (
   email: string,
   password: string
-): Promise<ApiResponse<{ token: string }>> => {
+)=> {
   try {
     let user = await loginUser(email, password);
     const payload = {
@@ -54,7 +54,7 @@ export const signInUser = async (
     const token = generateToken(payload);
     return {
       success: true,
-      data: { token },
+      data: { token, role:user.role },
     };
   } catch (error: any) {
     throw new ApiError(

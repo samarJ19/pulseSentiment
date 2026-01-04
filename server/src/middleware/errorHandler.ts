@@ -10,6 +10,14 @@ export const errorHandler = (
   next: NextFunction
 ) => {
     console.error(err);
+
+  // Ensure CORS headers are set on error responses
+  const origin = req.headers.origin as string;
+  if (origin) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+  }
+
   if (err instanceof ZodError) {
     return res.status(400).json({
       success: false,

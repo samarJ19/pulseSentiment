@@ -1,31 +1,35 @@
+import { type ReactNode } from "react";
 import {
   Route,
   BrowserRouter as Router,
   Routes,
   useLocation,
+  Navigate,
 } from "react-router-dom";
 import Home from "./pages/Home";
-import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import FeedbackForm from "./pages/FeedbackForm";
 import AdminDashboard from "./pages/Dashboard";
 import Error from "./pages/Error";
+import LoginPage from "./pages/Login";
+import NotFound from "./pages/NotFound";
+import { Toaster } from "@/components/ui/toaster";
 
-const UserIdentity = () => {
-  const userStatus = localStorage.getItem("role");
-  const path = useLocation();
-  const trailingPart = path.pathname.substring(
-    path.pathname.lastIndexOf("/") + 1
-  );
-  console.log(trailingPart);
-  if (
-    userStatus == "USER" ||
-    (userStatus == "ADMIN" && trailingPart == "feedbackform")
-  ) {
-    return <FeedbackForm />;
-  } else if (userStatus == "ADMIN" && trailingPart == "admindashboard") {
-    return <AdminDashboard />;
-  } else {
+const RequireAuth = ({
+  allowedRoles,
+  children,
+}: {
+  allowedRoles: string[];
+  children: ReactNode;
+}) => {
+  const role = localStorage.getItem("ROLE");
+  const location = useLocation();
+
+  if (!role) {
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  }
+
+  if (!allowedRoles.includes(role)) {
     return (
       <Error
         nameOfError="Unauthorized"
@@ -33,6 +37,8 @@ const UserIdentity = () => {
       />
     );
   }
+
+  return children;
 };
 
 function App() {
@@ -48,12 +54,28 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/feedbackform" element={<UserIdentity />} />
-          <Route path="/admindashboard" element={<UserIdentity />} />
+          <Route
+            path="/feedbackform"
+            element={
+              <RequireAuth allowedRoles={["USER", "ADMIN"]}>
+                <FeedbackForm />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/admindashboard"
+            element={
+              <RequireAuth allowedRoles={["ADMIN"]}>
+                <AdminDashboard />
+              </RequireAuth>
+            }
+          />
+          <Route path="*" element = {<NotFound/>} />
         </Routes>
       </Router>
+      <Toaster />
     </>
   );
 }

@@ -8,7 +8,7 @@ export const authMiddleware = async (
   next: NextFunction
 ) => {
   try {
-    const token = req.header("Authorization")?.replace("Bearer ", "") as string;
+    const token = req.cookies?.token;
     if (!token) {
       console.log(token);
       throw new ApiError("InvalidToken", "Invalid or Missing Token", 401);

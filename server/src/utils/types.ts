@@ -39,8 +39,8 @@ export interface jwtPayload {
 
 import * as z from "zod";
 export const datesSchema = z.object({
-  from: z.string(),
-  to: z.string(),
+  from: z.string().optional(),
+  to: z.string().optional(),
 });
 
 export const registerUserSchema = z.object({
