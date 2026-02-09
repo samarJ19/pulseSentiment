@@ -6,6 +6,7 @@ import {
   DateRangePicker,
   ExportControls,
   RawFeedbackView,
+  AnalysisCard,
 } from "@/components/dashboard";
 import type { FeedbackCategory, RawFeedback } from "@/components/dashboard";
 
@@ -36,6 +37,10 @@ export function DashboardContent() {
   const [summaryLoading, setSummaryLoading] = useState(true);
   const [summaryFromDate, setSummaryFromDate] = useState(defaultDates.from);
   const [summaryToDate, setSummaryToDate] = useState(defaultDates.to);
+
+  // Analysis state
+  const [analysisFromDate, setAnalysisFromDate] = useState(defaultDates.from);
+  const [analysisToDate, setAnalysisToDate] = useState(defaultDates.to);
 
   // Export state
   const [exportFromDate, setExportFromDate] = useState(defaultDates.from);
@@ -190,6 +195,30 @@ export function DashboardContent() {
           />
         </div>
         <FeedbackSummary data={summaryData} loading={summaryLoading} />
+      </section>
+
+      {/* AI Analysis Section */}
+      <section className="space-y-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 className="text-lg font-semibold">AI Analysis</h2>
+            <p className="text-sm text-muted-foreground">
+              Get AI-powered insights and mitigation strategies
+            </p>
+          </div>
+          <DateRangePicker
+            fromDate={analysisFromDate}
+            toDate={analysisToDate}
+            onFromChange={setAnalysisFromDate}
+            onToChange={setAnalysisToDate}
+            onApply={() => {}}
+            loading={false}
+          />
+        </div>
+        <AnalysisCard
+          dateFrom={analysisFromDate}
+          dateTo={analysisToDate}
+        />
       </section>
 
       {/* Export Section */}

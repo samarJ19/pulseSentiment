@@ -26,9 +26,14 @@ export const authMiddleware = async (
     };
     return next();
   } catch (error: any) {
+    const statusCode =
+      error?.name === "TokenExpiredError" || error?.name === "JsonWebTokenError"
+        ? 401
+        : 400;
     throw new ApiError(
       error.name || "AuthError",
-      error.message || "Auth Error"
+      error.message || "Auth Error",
+      statusCode
     );
   }
 };

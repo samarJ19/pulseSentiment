@@ -6,8 +6,8 @@ export default function Error({
   descriptionOfError: string;
 }) {
   return (
-    <>
-      <div className="m-2 max-w-6xl mx-auto text-center">
+    <div className="relative min-h-screen flex items-center justify-center" style={{ backgroundImage: "url('/genbackground.png')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}>
+      <div className="relative z-10 m-2 max-w-6xl mx-auto text-center">
         <div>
           <h1>Error</h1>
         </div>
@@ -18,6 +18,6 @@ export default function Error({
           <h4>{descriptionOfError}</h4>
         </div>
       </div>
-    </>
+    </div>
   );
 }

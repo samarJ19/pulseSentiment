@@ -23,6 +23,17 @@ model feedback {
   category CATEGORY
 }
 
+model feedbackAnalysis {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  dateStart DateTime
+  dateEnd DateTime
+  summary String
+  mitigations Json
+  categoryBreakdown Json?
+  analyzedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 enum ROLE {
   ADMIN
   USER
@@ -33,6 +44,3 @@ enum CATEGORY {
   WORKLOAD
   TEAM
 }
-
-
-

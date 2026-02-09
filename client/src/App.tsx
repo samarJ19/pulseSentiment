@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import {
   Route,
   BrowserRouter as Router,
@@ -14,6 +14,7 @@ import Error from "./pages/Error";
 import LoginPage from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import { Toaster } from "@/components/ui/toaster";
+import { fetchMe } from "@/util/auth";
 
 const RequireAuth = ({
   allowedRoles,
@@ -22,8 +23,27 @@ const RequireAuth = ({
   allowedRoles: string[];
   children: ReactNode;
 }) => {
-  const role = localStorage.getItem("ROLE");
   const location = useLocation();
+  const [role, setRole] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    setIsLoading(true);
+    fetchMe().then(({ role: fetchedRole }) => {
+      if (isMounted) {
+        setRole(fetchedRole);
+        setIsLoading(false);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [location.pathname]);
+
+  if (isLoading) {
+    return null;
+  }
 
   if (!role) {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />;

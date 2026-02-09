@@ -78,3 +78,16 @@ export const exportFeedbackController = asyncHandler(
     return sendSuccess(res, fileData, 200);
   }
 );
+
+export const getMeController = asyncHandler(
+  async (req: Request, res: Response) => {
+    if (!req.user?.userId || !req.user?.role) {
+      return sendSuccess(res, { userId: null, role: null }, 200);
+    }
+    return sendSuccess(
+      res,
+      { userId: req.user.userId, role: req.user.role },
+      200
+    );
+  }
+);

@@ -15,8 +15,8 @@ export default function NotFound() {
     const location = useLocation()
 
     return (
-        <div className="bg-gradient-to-br from-primary/5 via-background to-background flex min-h-screen items-center justify-center px-6 py-16">
-            <Card className="w-full max-w-2xl border-dashed">
+        <div className="relative flex min-h-screen items-center justify-center px-6 py-16" style={{ backgroundImage: "url('/genbackground.png')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}>
+            <Card className="relative z-10 w-full max-w-2xl border-dashed">
                 <CardHeader className="flex flex-col gap-4">
                     <div className="flex items-center gap-4">
                         <span className="bg-primary/10 text-primary flex size-12 items-center justify-center rounded-2xl ring-1 ring-primary/20">

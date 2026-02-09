@@ -8,14 +8,14 @@ import cookieParser from "cookie-parser";
 dotenv.config({ path: "./.env" });
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 export const saltRounds = 10;
 
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
-  "https://your-production-client.com",
-];
+  process.env.CLIENT_URL || "https://your-production-client.com",
+].filter(Boolean);
 app.use(cookieParser());
 // Custom CORS middleware (Express 5 compatible with credentials support)
 app.use((req, res, next) => {

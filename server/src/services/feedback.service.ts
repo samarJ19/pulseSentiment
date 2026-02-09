@@ -2,8 +2,14 @@ import {
   createFeedback,
   feedbackSummary,
   lastWeekFeedbackSummary,
+  getFeedbacksByDateRange,
+  createFeedbackAnalysis,
+  getAnalysisByDateRange,
+  getLatestAnalysis,
 } from "../repositories/feedback.repository";
 import { Category, InputFeedback, feedbackObjects } from "../utils/types";
+import { analyzeFeeds } from "../utils/groqClient";
+import dayjs from "dayjs";
 
 export const submitFeedback = async ({
   message,
@@ -37,4 +43,64 @@ export const getWeeklyFeedback = async (from?: string, to?: string) => {
         category,
         messages
       }));
+};
+
+export const analyzeFeedbacksService = async (from: string, to: string) => {
+  try {
+    // Fetch feedbacks in the date range
+    const feedbacks = await getFeedbacksByDateRange(from, to);
+    
+    if (feedbacks.length === 0) {
+      throw new Error("No feedbacks found in the selected date range");
+    }
+
+    // Aggregate feedbacks with category grouping
+    const feedbackText = feedbacks
+      .map((fb) => `[${fb.category}] ${fb.message}`)
+      .join("\n");
+
+    // Call Groq AI for analysis
+    const analysisResult = await analyzeFeeds(feedbackText);
+    const parsedAnalysis = JSON.parse(analysisResult);
+
+    // Build category breakdown
+    const categoryBreakdown: Record<string, number> = {
+      TEAM: 0,
+      WORKLOAD: 0,
+      PERSONAL: 0,
+    };
+    feedbacks.forEach((fb) => {
+      if (categoryBreakdown[fb.category] !== undefined) {
+        categoryBreakdown[fb.category]++;
+      }
+    });
+
+    // Store analysis in database
+    const analysis = await createFeedbackAnalysis(
+      new Date(from),
+      new Date(to),
+      parsedAnalysis.summary,
+      parsedAnalysis.mitigations,
+      categoryBreakdown
+    );
+
+    return analysis;
+  } catch (error) {
+    throw new Error(
+      `Failed to analyze feedbacks: ${error instanceof Error ? error.message : "Unknown error"}`
+    );
+  }
+};
+
+export const getAnalysisService = async (from?: string, to?: string) => {
+  try {
+    if (from && to) {
+      return await getAnalysisByDateRange(from, to);
+    }
+    return await getLatestAnalysis();
+  } catch (error) {
+    throw new Error(
+      `Failed to retrieve analysis: ${error instanceof Error ? error.message : "Unknown error"}`
+    );
+  }
 };

@@ -3,8 +3,8 @@ import { DashboardContent } from "@/components/dashboard";
 
 export default function AdminDashboard() {
   return (
-    <div className="bg-muted min-h-svh p-6 md:p-10">
-      <div className="mx-auto max-w-6xl">
+    <div className="relative min-h-svh p-6 md:p-10" style={{ backgroundImage: "url('/genbackground.png')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}>
+      <div className="relative z-10 mx-auto max-w-6xl">
         <div className="bg-card text-card-foreground rounded-xl border shadow-sm">
           <div className="flex items-center justify-between border-b px-6 py-4">
             <div className="font-semibold text-lg">Admin Dashboard</div>
