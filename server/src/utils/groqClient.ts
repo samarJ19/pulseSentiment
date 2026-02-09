@@ -1,10 +1,18 @@
-import Groq from "groq-sdk";
+// groq-sdk is ESM-only, use dynamic import for CommonJS compatibility
+let groqInstance: any = null;
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+async function getGroqClient() {
+  if (!groqInstance) {
+    const { default: Groq } = await import("groq-sdk");
+    groqInstance = new Groq({
+      apiKey: process.env.GROQ_API_KEY,
+    });
+  }
+  return groqInstance;
+}
 
 export async function analyzeFeeds(feedbackText: string): Promise<string> {
+  const groq = await getGroqClient();
   const message = await groq.chat.completions.create({
     model: "llama-3.1-8b-instant",
     max_tokens: 1024,
