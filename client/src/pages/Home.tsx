@@ -32,7 +32,7 @@ export default function Home() {
   return (
     <div
       className="relative h-100vh overflow-hidden  w-full bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/pulsebackground.png')" }}
+      style={{ backgroundImage: "url('/pulsebackground.jpeg')" }}
     >
       {/* Overlay for better text readability */}
       <div className="absolute inset-0 bg-black/40" />

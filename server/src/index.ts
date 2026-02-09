@@ -14,7 +14,7 @@ export const saltRounds = 10;
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
-  process.env.CLIENT_URL || "https://your-production-client.com",
+  process.env.CLIENT_URL || "https://pulse-sentiment.vercel.app/",
 ].filter(Boolean);
 app.use(cookieParser());
 // Custom CORS middleware (Express 5 compatible with credentials support)
